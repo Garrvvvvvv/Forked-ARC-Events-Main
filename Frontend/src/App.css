@@ -1,0 +1,63 @@
+/* Falling Stars Background */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  background-color: #000000; /* Dark background */
+}
+
+#root {
+  min-height: 100vh; /* Full viewport height */
+  position: relative;
+  z-index: 1;
+}
+
+#background-container {
+  position: fixed; /* Fix background behind */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Behind all content */
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  top: -10px;
+  width: 5px;
+  height: 5px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall 5s infinite linear;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) translateX(10px);
+    opacity: 0;
+  }
+}
+
+/* Randomness */
+.star:nth-child(odd) {
+  animation-duration: 4s;
+  animation-delay: 0s;
+}
+.star:nth-child(even) {
+  animation-duration: 6s;
+  animation-delay: 1s;
+}
+
+/* Noise Background */
+.bg-noise {
+  background-color: #f8f6f3;
+  background-image: url('https://www.transparenttextures.com/patterns/noise.png');
+  background-size: auto;
+}

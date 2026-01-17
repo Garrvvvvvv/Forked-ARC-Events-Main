@@ -1,0 +1,16 @@
+# Ignore environment variables
+.env
+
+# Node modules (if using Node)
+node_modules/
+
+# Python cache (if Python project)
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
