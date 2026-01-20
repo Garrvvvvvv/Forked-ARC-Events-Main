@@ -84,8 +84,7 @@ export default function AdminLockManager() {
         try {
             const res = await apiAdmin.post("/api/locks/generate", {
                 eventId: selectedEventId,
-                eventId: selectedEventId,
-                // expiresInDays: parseInt(expiresInDays) || 30, // Default to 30 on backend if needed, or remove
+                // expiresInDays: parseInt(expiresInDays) || 30, 
                 // maxUsage: maxUsage ? parseInt(maxUsage) : null,
             });
 
@@ -97,7 +96,6 @@ export default function AdminLockManager() {
                 fetchLocks(); // Refresh list
 
                 // Reset form
-                setSelectedEventId("");
                 setSelectedEventId("");
                 // setExpiresInDays("30");
                 // setMaxUsage("");

@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../../lib/api"; // Assuming shared api instance or create new one? 
-// Using basic axios or fetch for now or reusing existing api instances if suitable.
-// Ideally use a dedicated api instance for controller but 'api' usually handles public/auth.
-// Let's use standard fetch or axios wrapper. 
-// I'll assume 'api' from lib/api is good, or standard fetch.
-// Replicating Admin Login style.
-
+import { apiController } from "../../lib/apiController";
 import { ArrowRight, Lock, User } from "lucide-react";
 
 export default function ControllerLogin() {
@@ -22,15 +16,12 @@ export default function ControllerLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/controller/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+            const res = await apiController.post("/api/controller/auth/login", {
+                username,
+                password
             });
 
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data.message || "Login failed");
+            const data = res.data;
 
             // Save token
             localStorage.setItem("controllerToken", data.token);
@@ -38,7 +29,7 @@ export default function ControllerLogin() {
 
             navigate("/controller/dashboard");
         } catch (error) {
-            setErr(error.message);
+            setErr(error.response?.data?.message || error.message || "Login failed");
         } finally {
             setLoading(false);
         }

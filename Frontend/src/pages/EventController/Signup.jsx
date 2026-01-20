@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Lock, User, CheckCircle } from "lucide-react";
+import { apiController } from "../../lib/apiController"; // Use configured instance
 
 export default function ControllerSignup() {
     const [formData, setFormData] = useState({
@@ -18,9 +19,9 @@ export default function ControllerSignup() {
 
     useEffect(() => {
         // Fetch public events for selection
-        fetch("http://localhost:5000/api/events/ongoing")
-            .then(res => res.json())
-            .then(data => setEvents(Array.isArray(data) ? data : []))
+        // Use relative path or configured base URL
+        apiController.get("/api/events/ongoing")
+            .then(res => setEvents(Array.isArray(res.data) ? res.data : []))
             .catch(() => setEvents([]))
     }, []);
 
@@ -40,25 +41,17 @@ export default function ControllerSignup() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/controller/auth/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    username: formData.username,
-                    password: formData.password,
-                    requestedEvent: formData.requestedEvent // Send ID
-                }),
+            await apiController.post("/api/controller/auth/signup", {
+                username: formData.username,
+                password: formData.password,
+                requestedEvent: formData.requestedEvent // Send ID
             });
-
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data.message || "Signup failed");
 
             setSuccess("Account created! Request sent to admin.");
             setTimeout(() => navigate("/controller/login"), 3000);
 
         } catch (error) {
-            setErr(error.message);
+            setErr(error.response?.data?.message || "Signup failed");
         } finally {
             setLoading(false);
         }

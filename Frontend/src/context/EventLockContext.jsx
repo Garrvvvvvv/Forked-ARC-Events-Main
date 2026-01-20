@@ -4,7 +4,7 @@ import axios from "axios";
 const EventLockContext = createContext();
 
 const LOCK_STORAGE_KEY = "event_lock_data";
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 export const EventLockProvider = ({ children }) => {
     const [lockState, setLockState] = useState(() => {
