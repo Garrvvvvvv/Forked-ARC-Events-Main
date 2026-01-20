@@ -108,8 +108,8 @@ export default function ResponsiveAppBar() {
       const lockedEventSlug = eventData.slug;
       return [
         { name: "Home", path: "/" },
-        { name: "Timeline", path: `/event/${lockedEventSlug}/flow` },
         { name: "Memories", path: `/event/${lockedEventSlug}/memories` },
+        { name: "Timeline", path: `/event/${lockedEventSlug}/flow` },
         { name: "Register", path: `/event/${lockedEventSlug}/register` },
       ];
     }
