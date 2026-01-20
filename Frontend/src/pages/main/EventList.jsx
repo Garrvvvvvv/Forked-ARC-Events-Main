@@ -31,24 +31,22 @@ export default function EventList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6 md:p-12 pt-24 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 text-gray-900 p-6 md:p-12 pt-24 relative overflow-hidden">
 
-      {/* Background Ambience */}
+      {/* Background Ambience - Light & Subtle */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-red-50 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-gray-100 rounded-full blur-[120px]"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
         <div className="text-center space-y-6 mb-16">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-              ARC Events
-            </span>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight font-serif text-gray-900">
+            ARC <span className="text-[#8B0000]">Events</span>
           </h1>
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Join us for our upcoming alumni gatherings, celebrations, and reunions.
             Connect, celebrate, and create new memories.
           </p>
@@ -56,9 +54,9 @@ export default function EventList() {
 
         {/* Empty State */}
         {events.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 bg-gray-900/50 rounded-3xl border border-gray-800 border-dashed backdrop-blur-sm">
-            <FaCalendarAlt className="text-6xl text-gray-700 mb-6" />
-            <h3 className="text-2xl font-bold text-gray-300">No events found</h3>
+          <div className="flex flex-col items-center justify-center p-16 bg-white rounded-[24px] border border-gray-200 border-dashed shadow-sm">
+            <FaCalendarAlt className="text-6xl text-gray-300 mb-6" />
+            <h3 className="text-2xl font-bold text-gray-400">No events found</h3>
             <p className="text-gray-500 mt-2">Check back later for upcoming gatherings.</p>
           </div>
         ) : (
@@ -67,10 +65,10 @@ export default function EventList() {
             {events.map(ev => (
               <div
                 key={ev._id}
-                className="group flex flex-col bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
+                className="group flex flex-col bg-white rounded-[24px] overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300"
               >
                 {/* Poster Image */}
-                <div className="h-56 bg-gray-800 relative overflow-hidden">
+                <div className="h-64 bg-gray-100 relative overflow-hidden">
                   {ev.posterUrl ? (
                     <img
                       src={ev.posterUrl}
@@ -78,48 +76,45 @@ export default function EventList() {
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-700 ease-out"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-800 text-gray-700">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-300">
                       <FaCalendarAlt className="text-5xl opacity-50" />
                     </div>
                   )}
 
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-90"></div>
+                  {/* Wrapper Gradient (Subtle) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
 
                   {/* Status Badge */}
-                  <div className={`absolute top-4 right-4 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2 border ${ev.status === 'LIVE' ? 'bg-green-500/10 border-green-500/20' :
-                    ev.status === 'PAUSED' ? 'bg-orange-500/10 border-orange-500/20' :
-                      'bg-red-500/10 border-red-500/20'
+                  <div className={`absolute top-4 right-4 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2 border shadow-sm ${ev.status === 'LIVE' ? 'bg-white/90 border-white text-green-700' :
+                      ev.status === 'PAUSED' ? 'bg-white/90 border-white text-orange-600' :
+                        'bg-white/90 border-white text-red-600'
                     }`}>
                     <div className={`w-2 h-2 rounded-full animate-pulse ${ev.status === 'LIVE' ? 'bg-green-500' :
-                      ev.status === 'PAUSED' ? 'bg-orange-500' :
-                        'bg-red-500'
+                        ev.status === 'PAUSED' ? 'bg-orange-500' :
+                          'bg-red-500'
                       }`}></div>
-                    <span className={`text-xs font-bold tracking-wide uppercase ${ev.status === 'LIVE' ? 'text-green-400' :
-                      ev.status === 'PAUSED' ? 'text-orange-400' :
-                        'text-red-400'
-                      }`}>
+                    <span className="text-xs font-bold tracking-wide uppercase">
                       {ev.status}
                     </span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="mb-4">
-                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                <div className="p-8 flex-1 flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#ca0002] transition-colors font-serif">
                       {ev.name}
                     </h3>
-                    <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">
+                    <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed font-medium">
                       {ev.description || "Join us for this special occasion. Click details to learn more."}
                     </p>
                   </div>
 
-                  <div className="mt-auto space-y-4">
+                  <div className="mt-auto space-y-3">
                     {/* Primary Action: Register */}
                     <Link
                       to={`/event/${ev.slug}/register`}
-                      className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-indigo-600/25 active:scale-95"
+                      className="flex items-center justify-center gap-2 w-full bg-[#ca0002] hover:bg-[#a00002] text-white font-bold py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
                     >
                       <FaTicketAlt /> Register Now
                     </Link>
@@ -128,13 +123,13 @@ export default function EventList() {
                     <div className="grid grid-cols-2 gap-3">
                       <Link
                         to={`/event/${ev.slug}/flow`}
-                        className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-lg text-sm font-medium transition border border-gray-700 hover:border-gray-600"
+                        className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-[#ca0002] py-3 rounded-xl text-sm font-bold transition border border-gray-100 hover:border-gray-200"
                       >
                         <FaClock size={14} /> Timeline
                       </Link>
                       <Link
                         to={`/event/${ev.slug}/memories`}
-                        className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-lg text-sm font-medium transition border border-gray-700 hover:border-gray-600"
+                        className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-[#ca0002] py-3 rounded-xl text-sm font-bold transition border border-gray-100 hover:border-gray-200"
                       >
                         <FaImages size={14} /> Gallery
                       </Link>

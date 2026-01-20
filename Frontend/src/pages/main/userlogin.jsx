@@ -22,45 +22,54 @@ function LoginInner() {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2e2e2e] via-[#1f1f1f] to-[#121212]" />
+    <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-4">
+      {/* Main Card */}
+      <div className="w-full max-w-[900px] h-[500px] bg-white rounded-[24px] shadow-2xl flex overflow-hidden">
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div
-            className="
-              rounded-3xl bg-[#1f1f1f]/80 backdrop-blur-xl
-              border border-white/15
-              p-10
-              shadow-[0_20px_60px_rgba(0,0,0,0.6)]
-              hover:shadow-[0_24px_70px_rgba(0,0,0,0.75)]
-              transition-shadow duration-300
-            "
-          >
-            <div className="mb-6 text-center">
-              <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-              <p className="text-sm text-white/70 mt-1">Sign in to continue</p>
+        {/* Left Side: Login Content */}
+        <div className="w-full md:w-1/2 p-10 sm:p-14 flex flex-col justify-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+          <p className="text-sm text-gray-500 mb-10">
+            Please login with your google account to continue.
+          </p>
+
+          {!clientId ? (
+            <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+              Missing VITE_GOOGLE_CLIENT_ID in .env
             </div>
-
-            {!clientId ? (
-              <div className="text-red-300 text-sm text-center">
-                Missing VITE_GOOGLE_CLIENT_ID in .env
-              </div>
-            ) : (
-              <div className="flex justify-center">
+          ) : (
+            <div className="w-full">
+              {/* Google Login Wrapper to customize width/size if possible, or just standard */}
+              <div className="flex justify-start">
                 <GoogleLogin
                   onSuccess={(resp) => handleAuthResponse(resp.credential)}
                   onError={() => alert("Google sign-in failed")}
                   useOneTap
+                  size="large"
+                  theme="outline"
+                  width="300"
+                  logo_alignment="left"
+                  shape="rectangular"
                 />
               </div>
-            )}
+            </div>
+          )}
 
-            <p className="mt-8 text-center text-xs text-white/50">
-              By continuing you agree to our Terms and Privacy Policy.
-            </p>
+          <div className="mt-8 text-xs text-gray-400">
+            <p>By signing in, you agree to our Terms of Service and Privacy Policy.</p>
           </div>
         </div>
+
+        {/* Right Side: Image */}
+        <div className="hidden md:block w-1/2 relative bg-gray-100">
+          <img
+            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop"
+            alt="Thapar Campus"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Optional Overlay to match image tone if needed, but clean image is usually better */}
+        </div>
+
       </div>
     </div>
   );

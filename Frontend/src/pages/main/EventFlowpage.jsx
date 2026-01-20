@@ -6,71 +6,7 @@ import { ArrowLeft, Calendar, Clock, AlertCircle } from "lucide-react";
 /* =========================================
    1. SNOW OVERLAY (Visuals)
    ========================================= */
-function SnowOverlay({ density = 140 }) {
-  const canvasRef = useRef(null);
-  const rafRef = useRef();
-  const particlesRef = useRef([]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(canvas.clientWidth * dpr);
-      canvas.height = Math.floor(canvas.clientHeight * dpr);
-      const ctx = canvas.getContext("2d");
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const count = Math.min(density, 150);
-    particlesRef.current = Array.from({ length: count }).map(() => ({
-      x: Math.random() * canvas.clientWidth,
-      y: Math.random() * canvas.clientHeight,
-      r: 0.8 + Math.random() * 2.2,
-      spdY: 0.35 + Math.random() * 0.9,
-      spdX: -0.3 + Math.random() * 0.6,
-      sway: Math.random() * 2 * Math.PI,
-      swayAmp: 0.6 + Math.random() * 1.0,
-      alpha: 0.65 + Math.random() * 0.35,
-    }));
-
-    const ctx = canvas.getContext("2d");
-    const step = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      ctx.clearRect(0, 0, width, height);
-
-      particlesRef.current.forEach((p) => {
-        p.sway += 0.01;
-        p.y += p.spdY;
-        p.x += p.spdX + Math.sin(p.sway) * p.swayAmp * 0.2;
-        if (p.y > height) {
-          p.y = -5;
-          p.x = Math.random() * width;
-        }
-        ctx.globalAlpha = p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-      });
-
-      rafRef.current = requestAnimationFrame(step);
-    };
-
-    resize();
-    rafRef.current = requestAnimationFrame(step);
-    window.addEventListener("resize", resize);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", resize);
-    };
-  }, [density]);
-
-  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 w-full h-full opacity-60 z-0" />;
-}
+/* SNOW OVERLAY REMOVED */
 
 /* =========================================
    2. TIMELINE VIEW (Specific Event)
@@ -112,7 +48,7 @@ const TimelineView = ({ eventData, onBack }) => {
   return (
     <div className="relative h-screen overflow-hidden bg-gray-950">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
-      <SnowOverlay density={120} />
+      {/* SnowOverlay Removed */}
 
       {/* Header */}
       <div className="absolute top-0 left-0 w-full z-20 p-6 pt-24 bg-gradient-to-b from-gray-900 via-gray-900/90 to-transparent flex items-center gap-4">

@@ -58,24 +58,7 @@ function Home() {
       .catch((err) => console.error("Error fetching memories images:", err));
   }, [token]);
 
-  /* ------------- Falling-stars background ------------- */
-  useEffect(() => {
-    const background = document.getElementById("background-container");
-    if (!background) return;
-    background.innerHTML = "";
-    const starCount = 150;
-    for (let i = 0; i < starCount; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      star.style.left = `${Math.random() * 100}vw`;
-      star.style.animationDuration = `${Math.random() * 3 + 3}s`;
-      star.style.animationDelay = `${Math.random() * 5}s`;
-      background.appendChild(star);
-    }
-    return () => {
-      if (background) background.innerHTML = "";
-    };
-  }, []);
+
 
   /* ----------------- Slider settings ----------------- */
   const NextArrow = ({ onClick }) => (
@@ -187,133 +170,174 @@ function Home() {
 
   return (
     <>
-      <div id="background-container"></div>
+      {/* Background container removed */}
 
       <div className="page-content">
-        {/* Hero Section */}
-        <section className="relative h-[70vh] sm:h-[75vh] md:h-[80vh] flex flex-col justify-center items-center text-white text-center p-4">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 leading-tight">
-            Silver Jubilee Celebration
-          </h1>
-          <p className="text-base sm:text-lg md:text-2xl font-medium text-[#C5CBD3]">
-            25 Years of Legacy | Reunite | Relive | Rejoice
-          </p>
 
-          {/* CTA */}
-          <a
-            href="/register"
-            aria-label="Register now for the Silver Jubilee Celebration"
-            className="
-              group mt-8 inline-flex items-center gap-3
-              px-8 sm:px-12 py-3 sm:py-4
-              rounded-full text-base sm:text-lg font-semibold tracking-wide
-              bg-gradient-to-r from-[#EE634F] to-[#F79B28]
-              text-black
-              shadow-[0_8px_24px_rgba(238,99,79,0.35)]
-              transition-all duration-300
-              hover:shadow-[0_12px_32px_rgba(238,99,79,0.5)]
-              hover:translate-y-[-2px]
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#F79B28] focus-visible:ring-offset-black
-            "
-          >
-            <span>Register Now</span>
-            <svg
-              className="size-5 sm:size-6 transition-transform duration-300 group-hover:translate-x-1"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </section>
+        {/* Posters - Maroon Background */}
+        <div className="w-full bg-[#8B0000] py-1 mb-1 ">
+          <section className="relative w-[100%] sm:w-[100%] mx-auto">
+            {/* <h2 className="text-l sm:text-xl md:text-2xl xl:text-3xl font-bold text-center mb-6 sm:mb-8 text-white">
+              Announcements & Posters
+            </h2> */}
 
-        {/* Posters */}
-        <section className="relative w-[95%] sm:w-[90%] mx-auto my-8 sm:my-12">
-          <h2 className="text-l sm:text-xl md:text-2xl xl:text-3xl font-bold text-center mb-6 sm:mb-8 text-[#EE634F]">
-            Announcements & Posters
-          </h2>
-
-          <Slider {...posterSettings}>
-            {posterImages.map((url, idx) => {
-              const { src, srcSet } = buildCloudinarySources(url, posterWidths, {
-                crop: "c_fill",
-                gravity: "g_auto",
-                quality: "q_auto",
-                fmt: "f_auto",
-                dpr: "dpr_auto",
-              });
-              return (
-                <div key={idx} className="px-2 sm:px-4">
-                  <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl border border-[#352e2e] bg-black">
-                    <img
-                      src={src}
-                      srcSet={srcSet}
-                      sizes={posterSizes}
-                      alt={`Poster ${idx + 1}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="
-                        w-full 
-                        h-[200px]
-                        sm:h-[320px] 
-                        md:h-[450px] 
-                        lg:h-[550px] 
-                        xl:h-[650px]
-                        object-cover 
-                        rounded-xl 
-                        transition-transform 
-                        duration-300 
-                        hover:scale-[1.01]
-                      "
-                    />
+            <Slider {...posterSettings}>
+              {posterImages.map((url, idx) => {
+                const { src, srcSet } = buildCloudinarySources(url, posterWidths, {
+                  crop: "c_fill",
+                  gravity: "g_auto",
+                  quality: "q_auto",
+                  fmt: "f_auto",
+                  dpr: "dpr_auto",
+                });
+                return (
+                  <div key={idx} className="px-2 sm:px-4">
+                    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl border border-[#352e2e] bg-black">
+                      <img
+                        src={src}
+                        srcSet={srcSet}
+                        sizes={posterSizes}
+                        alt={`Poster ${idx + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="
+                          w-full 
+                          h-[200px]
+                          sm:h-[320px] 
+                          md:h-[450px] 
+                          lg:h-[550px] 
+                          xl:h-[650px]
+                          object-cover 
+                          rounded-xl 
+                          transition-transform 
+                          duration-300 
+                          hover:scale-[1.01]
+                        "
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </Slider>
-        </section>
+                );
+              })}
+            </Slider>
+          </section>
+        </div>
+
 
         {/* Quick Navigation – dark, accent top border, animated hover */}
-        <section className="py-10 my-12 bg-[rgba(31,31,31,0.4)] shadow-md">
-          <div className="w-[95%] sm:w-[90%] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Quick Navigation - Redesigned to match TI Style */}
+        <section className="py-20 my-8 px-4">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { href: "/register", text: "Register Now", desc: "Secure your spot for the celebration.", icon: <FaClipboardList /> },
-              { href: "/eventflow", text: "Event Schedule", desc: "See the full day’s program flow.", icon: <FaRegCalendarAlt /> },
-              { href: "/memories", text: "Gallery", desc: "Relive the memories & highlights.", icon: <FaImage /> },
-              { href: "/meetourteam", text: "Meet ARC Team", desc: "Know the people behind the event.", icon: <FaUsers /> },
+              {
+                href: "/register",
+                text: "Register Now",
+                desc: "Secure your spot for the Silver Jubilee celebration.",
+                icon: <FaClipboardList />
+              },
+              {
+                href: "/eventflow",
+                text: "Event Schedule",
+                desc: "See the full flow of the day’s programs.",
+                icon: <FaRegCalendarAlt />
+              },
+              {
+                href: "/memories",
+                text: "Gallery",
+                desc: "Relive highlights through photos.",
+                icon: <FaImage />
+              },
+              {
+                href: "/meetourteam",
+                text: "Meet ARC Team",
+                desc: "Get to know the organizers making it happen.",
+                icon: <FaUsers />
+              },
             ].map((item, i) => (
               <a
                 key={i}
                 href={item.href}
-                className="
-                  group relative overflow-hidden rounded-2xl p-6
-                  bg-[linear-gradient(180deg,#242424_0%,#1b1b1b_100%)]
-                  shadow-[0_10px_28px_rgba(0,0,0,0.45)]
-                  transition-all duration-300
-                  hover:-translate-y-[6px] hover:shadow-[0_18px_40px_rgba(238,99,79,0.25)]
-                  focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EE634F]/60
-                "
-                aria-label={item.text}
+                className={`
+                  group block p-10 rounded-[24px] transition-all duration-300 h-full flex flex-col justify-between min-h-[380px]
+                  bg-white shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-transparent
+                  hover:bg-[#FFF5F5] hover:shadow-none
+                `}
               >
-                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#EE634F] via-[#F79B28] to-[#EE634F] opacity-80" />
-                <div className="pointer-events-none absolute -top-10 right-[-40px] h-28 w-28 rotate-12 rounded-full blur-2xl opacity-0 bg-[conic-gradient(from_120deg,rgba(238,99,79,0.18),rgba(247,155,40,0.12),transparent)] transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="mb-4 text-3xl text-[#E2E8F0] transition-all duration-300 group-hover:text-[#EE634F] group-hover:scale-105">
-                  {item.icon}
+                <div>
+                  {/* Icon Container */}
+                  <div className={`
+                      w-11 h-11 rounded-xl flex items-center justify-center text-3xl mb-8
+                       transition-colors text-[#ca0002] 
+                  `}>
+                    {item.icon}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-[1.8rem] font-bold text-gray-900 mb-4 leading-tight">
+                    {item.text}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-gray-500 text-[1.05rem] leading-7 font-medium">
+                    {item.desc}
+                  </p>
                 </div>
-                <h3 className="text-[#E2E8F0] text-lg sm:text-xl font-semibold tracking-tight mb-1">{item.text}</h3>
-                <p className="text-[#C5CBD3]/90 text-sm leading-relaxed mb-5">{item.desc}</p>
-                <span className="inline-flex items-center gap-2 text-[#EE634F] font-semibold">
-                  Open
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
+
+                {/* Learn More Link */}
+                <div className="flex items-center text-[#ca0002] font-bold text-[1rem] mt-8 group-hover:translate-x-1 transition-transform">
+                  <span className="mr-2">Learn More</span>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14" />
                     <path d="m12 5 7 7-7 7" />
                   </svg>
-                </span>
-                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-[#EE634F]/0 group-hover:ring-1 group-hover:ring-[#EE634F]/25 transition-all duration-300" />
+                </div>
               </a>
             ))}
           </div>
+        </section>
+
+        {/* Core Values Section - Maroon Alternating Layout */}
+        <section className="w-full">
+          {[
+            {
+              title: "CREATE",
+              text: "TIET offers a unique combination of courses and prepares students for higher education worldwide. Strong transdisciplinary foundation courses help students to decide their future career goals and prepare for wider possibilities. An innovative complementary project-based learning called AVANI is aimed to develop and upgrade pupils in becoming holistic individuals. Through this, students further explore future ventures to connect with global opportunities.",
+              img: "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?q=80&w=2070&auto=format&fit=crop", // Globe/Connection placeholder
+              layout: "left"
+            },
+            {
+              title: "CONNECT",
+              text: "TIET is situated within the campus of its mother Institution, Thapar Institute of Engineering & Technology, which has a vast infrastructure sprawling over 250 acres. TIET is one of the oldest and finest educational institutions in India offering a highly attractive structure of fees & scholarships to students. The students are also provided with all necessary facilities to develop a spirit of techno-innovation by faculty of repute.",
+              img: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop", // Campus/Infrastructure placeholder
+              layout: "right"
+            },
+            {
+              title: "CONTRIBUTE",
+              text: "Learning is a continuous process. TIET endeavors to cultivate in its students the skills for learning through state-of-the-art tools and techniques. The school helps its students to connect with associated top ranked universities across the world, which in turn helps capacity building of their respective institutions.",
+              img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop", // Students/Learning placeholder
+              layout: "left"
+            }
+          ].map((item, idx) => (
+            <div key={idx} className="flex flex-row min-h-[300px]">
+              {/* Image Side */}
+              <div className={`w-1/2 relative ${item.layout === 'right' ? 'order-2' : ''}`}>
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Text Side - Maroon Background */}
+              <div className={`w-1/2 bg-[#8B0000] text-white p-4 sm:p-8 md:p-16 flex flex-col justify-center ${item.layout === 'right' ? 'order-1' : ''}`}>
+                <h2 className="text-xl sm:text-3xl md:text-5xl font-serif font-bold mb-3 md:mb-6 tracking-wide">
+                  {item.title}
+                </h2>
+                <p className="text-[0.7rem] sm:text-sm md:text-lg leading-relaxed text-gray-100 font-light">
+                  {item.text}
+                </p>
+              </div>
+            </div>
+          ))}
         </section>
 
         {/* Memories */}

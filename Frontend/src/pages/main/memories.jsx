@@ -190,15 +190,15 @@ export default function PhotoGallery() {
   // =========================================================
   if (!selectedEvent) {
     return (
-      <div className="min-h-screen bg-gray-950 p-6 md:p-12 pt-24">
+      <div className="min-h-screen bg-gray-50 p-6 md:p-12 pt-24">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-white mb-2">Event Memories</h1>
-          <p className="text-gray-400 mb-12">Select an event to view its photo gallery.</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 font-serif">Event <span className="text-[#8B0000]">Memories</span></h1>
+          <p className="text-gray-500 mb-12">Select an event to view its photo gallery.</p>
 
           {isLoadingEvents ? (
-            <div className="text-indigo-400 animate-pulse">Loading events...</div>
+            <div className="text-[#8B0000] animate-pulse">Loading events...</div>
           ) : eventsList.length === 0 ? (
-            <div className="text-gray-500 text-center py-20 border border-gray-800 border-dashed rounded-xl">
+            <div className="text-gray-400 text-center py-20 border border-gray-200 border-dashed rounded-[24px] bg-white">
               No events found.
             </div>
           ) : (
@@ -207,25 +207,25 @@ export default function PhotoGallery() {
                 <div
                   key={ev._id}
                   onClick={() => setSelectedEvent(ev)}
-                  className="group bg-gray-900 rounded-xl overflow-hidden border border-gray-800 cursor-pointer hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
+                  className="group bg-white rounded-[20px] overflow-hidden border border-gray-100 cursor-pointer hover:border-[#ca0002]/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300"
                 >
-                  <div className="h-48 bg-gray-800 relative overflow-hidden">
+                  <div className="h-48 bg-gray-100 relative overflow-hidden">
                     {ev.posterUrl ? (
                       <img
                         src={ev.posterUrl}
                         alt={ev.name}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-700">
+                      <div className="w-full h-full flex items-center justify-center text-gray-300">
                         <ImageIcon className="w-12 h-12 opacity-50" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-60"></div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-white text-lg mb-1 group-hover:text-indigo-400 transition">{ev.name}</h3>
-                    <p className="text-xs text-gray-500 font-mono">View Gallery &rarr;</p>
+                    <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-[#ca0002] transition font-serif">{ev.name}</h3>
+                    <p className="text-xs text-gray-400 font-mono group-hover:text-[#ca0002] transition">View Gallery &rarr;</p>
                   </div>
                 </div>
               ))}
@@ -240,21 +240,21 @@ export default function PhotoGallery() {
   // VIEW 2: PHOTO GALLERY (Masonry)
   // =========================================================
   return (
-    <div className="min-h-screen bg-gray-950 pt-20">
+    <div className="min-h-screen bg-gray-50 pt-20">
       {/* Header Removed as requested - no back button, no title */}
 
       {/* Empty State */}
       {photos.length === 0 ? (
-        <div className="text-center py-32 border border-gray-800 border-dashed rounded-xl bg-gray-900/50">
-          <ImageIcon className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-          <p className="text-gray-400 text-lg">No photos uploaded yet.</p>
-          <p className="text-gray-600 text-sm">Check back after the event!</p>
+        <div className="text-center py-32 border border-gray-200 border-dashed rounded-[24px] bg-white mx-6">
+          <ImageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500 text-lg">No photos uploaded yet.</p>
+          <p className="text-gray-400 text-sm">Check back after the event!</p>
         </div>
       ) : (
         /* Masonry Grid */
         <Masonry
           breakpointCols={breakpointColumnsObj}
-          className="flex -ml-4 w-auto"
+          className="flex -ml-4 w-auto px-4"
           columnClassName="pl-4 bg-clip-padding"
         >
           {visiblePhotos.map((photo, index) => {
@@ -263,7 +263,7 @@ export default function PhotoGallery() {
             return (
               <div
                 key={photo._id || `${photo.url}-${index}`}
-                className="mb-4 overflow-hidden rounded-lg shadow-lg cursor-pointer transform transition-transform duration-300 hover:scale-[1.02]"
+                className="mb-4 overflow-hidden rounded-xl shadow-sm cursor-pointer transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
                 onClick={() => openLightbox(photo, index)}
               >
                 <LazyImage
@@ -272,7 +272,7 @@ export default function PhotoGallery() {
                   sizes={sizes}
                   placeholder={tiny}
                   alt={`gallery-${index}`}
-                  className="w-full h-auto object-cover rounded-lg"
+                  className="w-full h-auto object-cover rounded-xl"
                 />
               </div>
             );
@@ -282,7 +282,7 @@ export default function PhotoGallery() {
 
       {/* Infinite Scroll Sentinel */}
       {visibleCount < photos.length && (
-        <div ref={loadMoreRef} className="py-12 text-center text-sm text-gray-600 animate-pulse">
+        <div ref={loadMoreRef} className="py-12 text-center text-sm text-gray-500 animate-pulse">
           {loadingMore ? "Loading more memories..." : "Scroll for more"}
         </div>
       )}

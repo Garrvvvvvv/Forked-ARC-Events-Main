@@ -95,99 +95,101 @@ function App() {
     <EventLockProvider>
       {!hideNavAndFooter && <ResponsiveAppBar />}
 
-      <LockAwareRoute>
-        <Routes>
+      <div className={!hideNavAndFooter ? "pt-[90px] md:pt-0" : ""}>
+        <LockAwareRoute>
+          <Routes>
 
-          {/* =========================================
+            {/* =========================================
             1. PUBLIC USER ROUTES
            ========================================= */}
 
-          {/* LOCK ENTRY ROUTE (Must be first) */}
-          <Route path="/lock/:token" element={<LockEntry />} />
+            {/* LOCK ENTRY ROUTE (Must be first) */}
+            <Route path="/lock/:token" element={<LockEntry />} />
 
-          {/* 1. ORIGINAL HOME PAGE (Restored) */}
-          <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
+            {/* 1. ORIGINAL HOME PAGE (Restored) */}
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
 
-          {/* 2. EVENT DIRECTORY (The new list view) */}
-          <Route path="/events" element={<EventList />} />
+            {/* 2. EVENT DIRECTORY (The new list view) */}
+            <Route path="/events" element={<EventList />} />
 
-          {/* 3. STATIC PAGES */}
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/meetourteam" element={<Meetourteam />} />
+            {/* 3. STATIC PAGES */}
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/meetourteam" element={<Meetourteam />} />
 
-          {/* 4. TIMELINE (Two Modes) */}
-          <Route path="/eventFlow" element={<EventFlow />} />             {/* Navbar Link -> Directory */}
-          <Route path="/event/:eventSlug/flow" element={<EventFlow />} /> {/* Specific Event */}
+            {/* 4. TIMELINE (Two Modes) */}
+            <Route path="/eventFlow" element={<EventFlow />} />             {/* Navbar Link -> Directory */}
+            <Route path="/event/:eventSlug/flow" element={<EventFlow />} /> {/* Specific Event */}
 
-          {/* 5. MEMORIES (Two Modes) */}
-          <Route path="/memories" element={<PhotoGallery />} />               {/* Navbar Link -> Directory */}
-          <Route path="/events/memories" element={<PhotoGallery />} />        {/* Directory Alias */}
-          <Route path="/event/:eventSlug/memories" element={<PhotoGallery />} /> {/* Specific Event */}
+            {/* 5. MEMORIES (Two Modes) */}
+            <Route path="/memories" element={<PhotoGallery />} />               {/* Navbar Link -> Directory */}
+            <Route path="/events/memories" element={<PhotoGallery />} />        {/* Directory Alias */}
+            <Route path="/event/:eventSlug/memories" element={<PhotoGallery />} /> {/* Specific Event */}
 
-          {/* 6. REGISTRATION (Protected) */}
-          <Route
-            path="/event/:eventSlug/register"
-            element={
-              <UserProtectedRoute>
-                <Registration />
-              </UserProtectedRoute>
-            }
-          />
-          {/* Legacy redirect: Send /register to the events list so user can pick an event */}
-          <Route path="/register" element={<Navigate to="/events" replace />} />
+            {/* 6. REGISTRATION (Protected) */}
+            <Route
+              path="/event/:eventSlug/register"
+              element={
+                <UserProtectedRoute>
+                  <Registration />
+                </UserProtectedRoute>
+              }
+            />
+            {/* Legacy redirect: Send /register to the events list so user can pick an event */}
+            <Route path="/register" element={<Navigate to="/events" replace />} />
 
-          {/* 7. MY REGISTRATIONS (New Dashboard) */}
-          <Route
-            path="/my-registrations"
-            element={
-              <UserProtectedRoute>
-                <MyRegistrations />
-              </UserProtectedRoute>
-            }
-          />
+            {/* 7. MY REGISTRATIONS (New Dashboard) */}
+            <Route
+              path="/my-registrations"
+              element={
+                <UserProtectedRoute>
+                  <MyRegistrations />
+                </UserProtectedRoute>
+              }
+            />
 
 
-          {/* =========================================
+            {/* =========================================
             2. ADMIN ROUTES
            ========================================= */}
-          <Route path="/admin/login" element={<Login />} />
+            <Route path="/admin/login" element={<Login />} />
 
-          <Route
-            path="/admin/*"
-            element={
-              <AdminProtectedRoute>
-                <AdminEventProvider>
-                  <AdminLayout>
-                    <Routes>
-                      <Route path="dashboard" element={<Dashboard />} />
-                      <Route path="events" element={<AdminEvents />} />
-                      <Route path="registrations" element={<AdminRegistrations />} />
-                      <Route path="memories" element={<AdminMemories />} />
-                      {/* <Route path="rooms" element={<AdminRooms />} /> REMOVED */}
-                      <Route path="controllers" element={<AdminControllers />} />
+            <Route
+              path="/admin/*"
+              element={
+                <AdminProtectedRoute>
+                  <AdminEventProvider>
+                    <AdminLayout>
+                      <Routes>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="events" element={<AdminEvents />} />
+                        <Route path="registrations" element={<AdminRegistrations />} />
+                        <Route path="memories" element={<AdminMemories />} />
+                        {/* <Route path="rooms" element={<AdminRooms />} /> REMOVED */}
+                        <Route path="controllers" element={<AdminControllers />} />
 
-                      <Route path="locks" element={<AdminLockManager />} />
-                      {/* Fallback for admin */}
-                      <Route path="*" element={<Navigate to="dashboard" replace />} />
-                    </Routes>
-                  </AdminLayout>
-                </AdminEventProvider>
-              </AdminProtectedRoute>
-            }
-          />
+                        <Route path="locks" element={<AdminLockManager />} />
+                        {/* Fallback for admin */}
+                        <Route path="*" element={<Navigate to="dashboard" replace />} />
+                      </Routes>
+                    </AdminLayout>
+                  </AdminEventProvider>
+                </AdminProtectedRoute>
+              }
+            />
 
-          {/* 3. EVENT CONTROLLER (STAFF) */}
-          <Route path="/controller/login" element={<ControllerLogin />} />
-          <Route path="/controller/signup" element={<ControllerSignup />} />
-          <Route path="/controller/dashboard" element={<EventControllerDashboard />} />
-          <Route path="/controller/events/:eventId" element={<ControllerEventDetails />} />
+            {/* 3. EVENT CONTROLLER (STAFF) */}
+            <Route path="/controller/login" element={<ControllerLogin />} />
+            <Route path="/controller/signup" element={<ControllerSignup />} />
+            <Route path="/controller/dashboard" element={<EventControllerDashboard />} />
+            <Route path="/controller/events/:eventId" element={<ControllerEventDetails />} />
 
-          {/* Global Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Global Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
 
-        </Routes>
-      </LockAwareRoute>
+          </Routes>
+        </LockAwareRoute>
+      </div>
 
       {!hideNavAndFooter && <Footer />}
     </EventLockProvider>

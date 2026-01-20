@@ -133,54 +133,67 @@ export default function ResponsiveAppBar() {
       <AppBar
         position={isDesktop ? "sticky" : "fixed"}
         sx={{
-          backgroundColor: "rgba(0,0,0,1)",
-          boxShadow: "none",
+          backgroundColor: "#ffffff",
+          boxShadow: "0px 2px 4px rgba(0,0,0,0.05)",
           zIndex: theme.zIndex.appBar,
+          borderBottom: "2px solid #ca0002",
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ justifyContent: "space-between", minHeight: appBarHeight }}>
-            {/* Left: Greeting + avatar */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
-              <Avatar
-                src={showDefaultIcon ? undefined : avatarSrc}
-                imgProps={{ referrerPolicy: "no-referrer" }}
-                sx={{
-                  width: 40,
-                  height: 40,
-                  bgcolor: showDefaultIcon ? "transparent" : "grey.800",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}
-              >
-                {showDefaultIcon && (
-                  <AccountCircleRoundedIcon sx={{ fontSize: 36, color: "rgba(255,255,255,0.85)" }} />
-                )}
-              </Avatar>
+          <Toolbar sx={{ justifyContent: "space-between", minHeight: 80 }}>
 
-              <Box sx={{ lineHeight: 1 }}>
-                <Typography
-                  sx={{
-                    fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto",
-                    fontWeight: 700,
-                    fontSize: { xs: "1rem", sm: "1.1rem" },
-                    color: "#f1f1f1",
-                    letterSpacing: "0.2px",
-                  }}
-                >
-                  {greeting}
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto",
-                      fontWeight: 500,
-                      fontSize: "0.72rem",
-                      color: "rgba(255,255,255,0.6)",
-                    }}
-                  >
-                    {user ? "You are signed in" : "Please sign in to register"}
-                  </Typography>
-                  {user && (
+            {/* LEFT: LOGOS */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0 }}>
+              {/* TI Logo - Placeholder as requested */}
+              <img
+                src="/assets/ti-logo.png"
+                alt="TI Logo"
+                style={{ height: 50, display: "block" }}
+              />
+
+              {/* ARC / TSLAS Logo */}
+              <img
+                src="/assets/arc-logo.png"
+                alt="ARC Logo"
+                style={{ height: 60, display: "block" }}
+              />
+            </Box>
+
+            {/* RIGHT: NAVIGATION & USER */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 4 }}>
+
+              {/* Desktop Menu */}
+              <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
+                {pages.map((page) => (
+                  <Link key={page.name} to={page.path} style={{ textDecoration: "none" }}>
+                    <Typography
+                      sx={{
+                        color: "#333",
+                        fontFamily: "sans-serif",
+                        fontWeight: location.pathname === page.path ? 700 : 500,
+                        fontSize: "0.85rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        cursor: "pointer",
+                        "&:hover": { color: "#E85427" }, // Orange hover from logo
+                        ...(location.pathname === page.path && { color: "#E85427" })
+                      }}
+                    >
+                      {page.name}
+                    </Typography>
+                  </Link>
+                ))}
+              </Box>
+
+              {/* User Greeting (Styled for White BG) */}
+              <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 3, pl: 2, borderLeft: "1px solid #eee" }}>
+                {user ? (
+                  <>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#333" }}>
+                        Welcome, {firstName}
+                      </Typography>
+                    </Box>
                     <IconButton
                       onClick={() => {
                         localStorage.removeItem("app_auth");
@@ -188,132 +201,107 @@ export default function ResponsiveAppBar() {
                         window.dispatchEvent(new Event("storage"));
                       }}
                       size="small"
-                      sx={{
-                        ml: 0.5,
-                        color: "#ff6b6b",
-                        "&:hover": { backgroundColor: "rgba(255, 107, 107, 0.1)" }
-                      }}
+                      sx={{ color: "#d32f2f" }}
                     >
-                      <LogoutIcon fontSize="small" style={{ width: 16, height: 16 }} />
+                      <LogoutIcon fontSize="small" />
                     </IconButton>
-                  )}
-                </Box>
+                  </>
+                ) : (
+                  <Link to="/login" style={{ textDecoration: "none" }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.85rem", color: "#333", textTransform: "uppercase" }}>
+                      Login
+                    </Typography>
+                  </Link>
+                )}
               </Box>
+
+              {/* Mobile Menu Icon */}
+              <IconButton
+                onClick={toggleMobileMenu}
+                aria-expanded={mobileOpen}
+                aria-label="open mobile menu"
+                sx={{ display: { xs: "flex", md: "none" }, color: "#333" }}
+              >
+                <MenuIcon />
+              </IconButton>
             </Box>
 
-            {/* Center Circle Logo (Desktop only) */}
-            <Box
-              sx={{
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%) translateY(25%)",
-                backgroundColor: "black",
-                borderRadius: "50%",
-                width: 80,
-                height: 80,
-                display: { xs: "none", md: "flex" },
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: theme.zIndex.appBar + 10,
-              }}
-            >
-              <Avatar
-                src="/assets/ARCNavBarLogo.png"
-                sx={{
-                  width: 80,
-                  height: 80,
-                  transition: "transform 0.2s ease-in-out",
-                  "&:hover": { transform: "scale(1.05)" },
-                }}
-              />
-            </Box>
-
-            {/* Desktop Menu */}
-            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-              {pages.map((page) => (
-                <Link key={page.name} to={page.path} style={{ textDecoration: "none" }}>
-                  <Button
-                    sx={{
-                      color: "white",
-                      fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto",
-                      fontWeight: location.pathname === page.path ? 700 : 500,
-                      borderBottom:
-                        location.pathname === page.path ? "2px solid #ff6b6b" : "none",
-                      borderRadius: 0,
-                      px: 1,
-                      "&:hover": { borderBottom: "2px solid #ff6b6b" },
-                    }}
-                  >
-                    {page.name}
-                  </Button>
-                </Link>
-              ))}
-            </Box>
-
-            {/* Mobile Menu Icon */}
-            <IconButton
-              onClick={toggleMobileMenu}
-              aria-expanded={mobileOpen}
-              aria-label="open mobile menu"
-              sx={{ display: { xs: "flex", md: "none" }, color: "white" }}
-            >
-              <MenuIcon />
-            </IconButton>
           </Toolbar>
         </Container>
       </AppBar>
 
       {/* Mobile Menu */}
       <Paper
-        elevation={0}
+        elevation={4}
         square
         sx={{
           position: "fixed",
           left: 0,
           right: 0,
           top: 0,
-          height: "310px",
+          height: "auto",
+          maxHeight: "360px",
           zIndex: theme.zIndex.appBar - 1,
-          backgroundColor: "rgba(0,0,0,0.95)",
+          backgroundColor: "rgba(255,255,255,0.98)",
           backdropFilter: "blur(8px)",
           display: { xs: "flex", md: "none" },
           flexDirection: "column",
           alignItems: "center",
           px: 2,
-          pt: `${appBarHeight}px`,
+          pt: `100px`, // To clear the taller navbar
           pb: 4,
           gap: 2,
-          transform: mobileOpen ? "translateY(0)" : "translateY(-6%)",
+          transform: mobileOpen ? "translateY(0)" : "translateY(-100%)",
           opacity: mobileOpen ? 1 : 0,
           pointerEvents: mobileOpen ? "auto" : "none",
           transition: "transform 280ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease",
           overflowY: "auto",
+          borderBottom: "1px solid #ddd",
         }}
       >
         {pages.map((page) => (
           <Link
             key={page.name}
             to={page.path}
-            style={{ textDecoration: "none", width: "100%" }}
+            style={{ textDecoration: "none", width: "100%", textAlign: "center" }}
             onClick={() => setMobileOpen(false)}
           >
-            <Button
-              fullWidth
+            <Typography
               sx={{
-                color: "white",
-                fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto",
+                color: location.pathname === page.path ? "#E85427" : "#333",
+                fontFamily: "sans-serif",
                 fontWeight: location.pathname === page.path ? 700 : 500,
-                borderBottom:
-                  location.pathname === page.path ? "2px solid #ff6b6b" : "none",
-                borderRadius: 0,
-                py: 1.2,
-                "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
+                textTransform: "uppercase",
+                py: 1.5,
+                borderBottom: "1px solid #f0f0f0",
+                "&:hover": { color: "#E85427" },
               }}
             >
               {page.name}
-            </Button>
+            </Typography>
           </Link>
         ))}
+
+        {/* Mobile User Actions */}
+        {user ? (
+          <Button
+            onClick={() => {
+              localStorage.removeItem("app_auth");
+              setUser(null);
+              window.dispatchEvent(new Event("storage"));
+              setMobileOpen(false);
+            }}
+            sx={{ color: "#d32f2f", mt: 2 }}
+          >
+            LOGOUT ({firstName})
+          </Button>
+        ) : (
+          <Link to="/login" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", marginTop: 16 }}>
+            <Button variant="outlined" sx={{ color: "#333", borderColor: "#333" }}>
+              LOGIN
+            </Button>
+          </Link>
+        )}
       </Paper>
     </>
   );
