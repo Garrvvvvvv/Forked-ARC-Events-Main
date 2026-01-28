@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { FaFileExcel, FaFilePdf, FaDownload, FaTimes } from "react-icons/fa";
+import { FaFileExcel, FaFilePdf, FaDownload, FaTimes, FaSearch } from "react-icons/fa";
 
 export default function AdminRegistrations() {
   const { activeEvent } = useAdminEvent();
@@ -14,6 +14,7 @@ export default function AdminRegistrations() {
   const [viewReceipt, setViewReceipt] = useState(null);
   const [showExportModal, setShowExportModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState(new Set()); // Track expanded rows
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch Logic
   const fetchRegs = async () => {
@@ -70,9 +71,21 @@ export default function AdminRegistrations() {
     });
   };
 
+  // Filter Logic
+  const filteredRegs = regs.filter(r => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      r.name?.toLowerCase().includes(searchLower) ||
+      r.oauthEmail?.toLowerCase().includes(searchLower) ||
+      r.batch?.toLowerCase().includes(searchLower) ||
+      r.contact?.toLowerCase().includes(searchLower) ||
+      r.mobile?.toLowerCase().includes(searchLower)
+    );
+  });
+
   // Export to XLSX
   const exportToExcel = () => {
-    const data = regs.map(r => ({
+    const data = filteredRegs.map(r => ({
       Name: r.name,
       Email: r.oauthEmail,
       Batch: r.batch,
@@ -110,7 +123,7 @@ export default function AdminRegistrations() {
     doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, 14, 22);
 
     // Table data
-    const tableData = regs.map(r => [
+    const tableData = filteredRegs.map(r => [
       r.name,
       r.batch,
       r.contact || r.mobile || "N/A",
@@ -141,20 +154,40 @@ export default function AdminRegistrations() {
   return (
     <div className="max-w-7xl mx-auto relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h2 className="text-2xl font-bold text-white">Registrations: <span className="text-indigo-400">{activeEvent.name}</span></h2>
-        <button
-          onClick={() => setShowExportModal(true)}
-          disabled={regs.length === 0}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium transition"
-        >
-          <FaDownload /> Export ({regs.length})
-        </button>
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">Registrations: <span className="text-indigo-400">{activeEvent.name}</span></h2>
+          <p className="text-gray-400 text-sm">Total: {regs.length} | Showing: {filteredRegs.length}</p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          {/* Search Input */}
+          <div className="relative group w-full md:w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-400 transition-colors">
+              <FaSearch />
+            </div>
+            <input
+              type="text"
+              placeholder="Search candidate..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            />
+          </div>
+
+          <button
+            onClick={() => setShowExportModal(true)}
+            disabled={filteredRegs.length === 0}
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap"
+          >
+            <FaDownload /> Export
+          </button>
+        </div>
       </div>
 
       {/* Desktop Table View - Hidden on Mobile */}
-      <div className="hidden lg:block bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+      <div className="hidden lg:block bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto min-h-[400px]">
         <table className="w-full text-left text-sm text-gray-400">
-          <thead className="bg-gray-800 text-gray-200 uppercase font-medium text-xs">
+          <thead className="bg-gray-800 text-gray-200 uppercase font-medium text-xs sticky top-0">
             <tr>
               <th className="p-4">Candidate</th>
               <th className="p-4">Contact</th>
@@ -166,182 +199,194 @@ export default function AdminRegistrations() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800">
-            {regs.map(r => (
-              <tr key={r._id} className="hover:bg-gray-800/50 transition">
-                <td className="p-4">
-                  <p className="font-bold text-white">{r.name}</p>
-                  <p className="text-xs">{r.oauthEmail}</p>
-                  <p className="text-xs text-gray-500">Batch: {r.batch}</p>
+            {filteredRegs.length > 0 ? (
+              filteredRegs.map(r => (
+                <tr key={r._id} className="hover:bg-gray-800/50 transition">
+                  <td className="p-4">
+                    <p className="font-bold text-white">{r.name}</p>
+                    <p className="text-xs">{r.oauthEmail}</p>
+                    <p className="text-xs text-gray-500">Batch: {r.batch}</p>
+                  </td>
+                  <td className="p-4">{r.contact || r.mobile || "N/A"}</td>
+                  <td className="p-4">
+                    {r.familyMembers?.length > 0 ? (
+                      <div>
+                        <button
+                          onClick={() => toggleRow(r._id)}
+                          className="bg-purple-900 text-purple-200 px-2 py-1 rounded text-xs hover:bg-purple-800 transition cursor-pointer"
+                        >
+                          Family ({r.familyMembers.length}) {expandedRows.has(r._id) ? '▼' : '▶'}
+                        </button>
+                        {expandedRows.has(r._id) && (
+                          <div className="mt-2 pl-2 border-l-2 border-purple-500">
+                            {r.familyMembers.map((fm, idx) => (
+                              <div key={idx} className="text-xs text-gray-400 mb-1">
+                                <span className="text-white font-medium">{fm.name}</span>
+                                <span className="text-purple-300 ml-2">({fm.relation})</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="bg-blue-900 text-blue-200 px-2 py-1 rounded text-xs">Solo</span>
+                    )}
+                    <div className="mt-1 text-xs text-green-400">Paid: ₹{r.amount}</div>
+                  </td>
+                  <td className="p-4">
+                    {r.receiptUrl ? (
+                      <button onClick={() => setViewReceipt(r.receiptUrl)} className="text-indigo-400 underline hover:text-indigo-300 text-xs">View Receipt</button>
+                    ) : <span className="text-gray-600 text-xs">No File</span>}
+                  </td>
+                  <td className="p-4">
+                    <span className="text-xs text-gray-300">{formatDate(r.createdAt)}</span>
+                  </td>
+                  <td className="p-4">
+                    {r.approvedBy ? (
+                      <span className="text-xs text-white font-medium">{r.approvedBy.username}</span>
+                    ) : (
+                      <span className="text-xs text-gray-600">N/A</span>
+                    )}
+                  </td>
+                  <td className="p-4 text-right space-x-2">
+                    {r.status === "PENDING" && (
+                      <>
+                        <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold">Approve</button>
+                        <button onClick={() => handleStatus(r._id, "REJECTED")} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold">Reject</button>
+                      </>
+                    )}
+                    {r.status === "APPROVED" && (
+                      <>
+                        <span className="text-xs font-bold px-2 py-1 rounded text-green-400 bg-green-900/20 border border-green-700">APPROVED</span>
+                        <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Disapprove</button>
+                      </>
+                    )}
+                    {r.status === "REJECTED" && (
+                      <>
+                        <span className="text-xs font-bold px-2 py-1 rounded text-red-400 bg-red-900/20 border border-red-700">REJECTED</span>
+                        <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Approve</button>
+                        <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Reset</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="p-8 text-center text-gray-500">
+                  {searchTerm ? "No candidates found matching your search." : "No registrations found."}
                 </td>
-                <td className="p-4">{r.contact || r.mobile || "N/A"}</td>
-                <td className="p-4">
-                  {r.familyMembers?.length > 0 ? (
-                    <div>
-                      <button
-                        onClick={() => toggleRow(r._id)}
-                        className="bg-purple-900 text-purple-200 px-2 py-1 rounded text-xs hover:bg-purple-800 transition cursor-pointer"
-                      >
-                        Family ({r.familyMembers.length}) {expandedRows.has(r._id) ? '▼' : '▶'}
-                      </button>
-                      {expandedRows.has(r._id) && (
-                        <div className="mt-2 pl-2 border-l-2 border-purple-500">
-                          {r.familyMembers.map((fm, idx) => (
-                            <div key={idx} className="text-xs text-gray-400 mb-1">
-                              <span className="text-white font-medium">{fm.name}</span>
-                              <span className="text-purple-300 ml-2">({fm.relation})</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="bg-blue-900 text-blue-200 px-2 py-1 rounded text-xs">Solo</span>
-                  )}
-                  <div className="mt-1 text-xs text-green-400">Paid: ₹{r.amount}</div>
-                </td>
-                <td className="p-4">
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View - Visible on Mobile Only */}
+      <div className="lg:hidden space-y-4">
+        {filteredRegs.length > 0 ? (
+          filteredRegs.map(r => (
+            <div key={r._id} className="bg-gray-900 rounded-xl border border-gray-800 p-4 space-y-3">
+              {/* Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-bold text-white text-lg">{r.name}</p>
+                  <p className="text-xs text-gray-400">{r.oauthEmail}</p>
+                  <p className="text-xs text-gray-500 mt-1">Batch: {r.batch}</p>
+                </div>
+                <div className="text-right">
+                  {r.status === "APPROVED" && <span className="text-xs font-bold px-2 py-1 rounded text-green-400 bg-green-900/20 border border-green-700">APPROVED</span>}
+                  {r.status === "REJECTED" && <span className="text-xs font-bold px-2 py-1 rounded text-red-400 bg-red-900/20 border border-red-700">REJECTED</span>}
+                  {r.status === "PENDING" && <span className="text-xs font-bold px-2 py-1 rounded text-yellow-400 bg-yellow-900/20 border border-yellow-700">PENDING</span>}
+                </div>
+              </div>
+
+              <div className="border-t border-gray-800 pt-3 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Contact:</span>
+                  <span className="text-white font-medium">{r.contact || r.mobile || "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-start">
+                  <span className="text-gray-500">Type:</span>
+                  <div className="text-right">
+                    {r.familyMembers?.length > 0 ? (
+                      <div>
+                        <button
+                          onClick={() => toggleRow(r._id)}
+                          className="bg-purple-900 text-purple-200 px-2 py-1 rounded text-xs hover:bg-purple-800 transition"
+                        >
+                          Family ({r.familyMembers.length}) {expandedRows.has(r._id) ? '▼' : '▶'}
+                        </button>
+                        {expandedRows.has(r._id) && (
+                          <div className="mt-2 pl-2 border-l-2 border-purple-500 text-left">
+                            {r.familyMembers.map((fm, idx) => (
+                              <div key={idx} className="text-xs text-gray-400 mb-1">
+                                <span className="text-white font-medium">{fm.name}</span>
+                                <span className="text-purple-300 ml-2">({fm.relation})</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="bg-blue-900 text-blue-200 px-2 py-1 rounded text-xs">Solo</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Amount:</span>
+                  <span className="text-green-400 font-bold">₹{r.amount}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Receipt:</span>
                   {r.receiptUrl ? (
-                    <button onClick={() => setViewReceipt(r.receiptUrl)} className="text-indigo-400 underline hover:text-indigo-300 text-xs">View Receipt</button>
+                    <button onClick={() => setViewReceipt(r.receiptUrl)} className="text-indigo-400 underline hover:text-indigo-300 text-xs">View</button>
                   ) : <span className="text-gray-600 text-xs">No File</span>}
-                </td>
-                <td className="p-4">
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Registered:</span>
                   <span className="text-xs text-gray-300">{formatDate(r.createdAt)}</span>
-                </td>
-                <td className="p-4">
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Approved By:</span>
                   {r.approvedBy ? (
                     <span className="text-xs text-white font-medium">{r.approvedBy.username}</span>
                   ) : (
                     <span className="text-xs text-gray-600">N/A</span>
                   )}
-                </td>
-                <td className="p-4 text-right space-x-2">
-                  {r.status === "PENDING" && (
-                    <>
-                      <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold">Approve</button>
-                      <button onClick={() => handleStatus(r._id, "REJECTED")} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold">Reject</button>
-                    </>
-                  )}
-                  {r.status === "APPROVED" && (
-                    <>
-                      <span className="text-xs font-bold px-2 py-1 rounded text-green-400 bg-green-900/20 border border-green-700">APPROVED</span>
-                      <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Disapprove</button>
-                    </>
-                  )}
-                  {r.status === "REJECTED" && (
-                    <>
-                      <span className="text-xs font-bold px-2 py-1 rounded text-red-400 bg-red-900/20 border border-red-700">REJECTED</span>
-                      <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Approve</button>
-                      <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs font-bold ml-2">Reset</button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {regs.length === 0 && !loading && <div className="p-8 text-center text-gray-500">No registrations found yet.</div>}
-      </div>
-
-      {/* Mobile Card View - Visible on Mobile Only */}
-      <div className="lg:hidden space-y-4">
-        {regs.map(r => (
-          <div key={r._id} className="bg-gray-900 rounded-xl border border-gray-800 p-4 space-y-3">
-            {/* Header */}
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-bold text-white text-lg">{r.name}</p>
-                <p className="text-xs text-gray-400">{r.oauthEmail}</p>
-                <p className="text-xs text-gray-500 mt-1">Batch: {r.batch}</p>
-              </div>
-              <div className="text-right">
-                {r.status === "APPROVED" && <span className="text-xs font-bold px-2 py-1 rounded text-green-400 bg-green-900/20 border border-green-700">APPROVED</span>}
-                {r.status === "REJECTED" && <span className="text-xs font-bold px-2 py-1 rounded text-red-400 bg-red-900/20 border border-red-700">REJECTED</span>}
-                {r.status === "PENDING" && <span className="text-xs font-bold px-2 py-1 rounded text-yellow-400 bg-yellow-900/20 border border-yellow-700">PENDING</span>}
-              </div>
-            </div>
-
-            <div className="border-t border-gray-800 pt-3 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Contact:</span>
-                <span className="text-white font-medium">{r.contact || r.mobile || "N/A"}</span>
-              </div>
-
-              <div className="flex justify-between items-start">
-                <span className="text-gray-500">Type:</span>
-                <div className="text-right">
-                  {r.familyMembers?.length > 0 ? (
-                    <div>
-                      <button
-                        onClick={() => toggleRow(r._id)}
-                        className="bg-purple-900 text-purple-200 px-2 py-1 rounded text-xs hover:bg-purple-800 transition"
-                      >
-                        Family ({r.familyMembers.length}) {expandedRows.has(r._id) ? '▼' : '▶'}
-                      </button>
-                      {expandedRows.has(r._id) && (
-                        <div className="mt-2 pl-2 border-l-2 border-purple-500 text-left">
-                          {r.familyMembers.map((fm, idx) => (
-                            <div key={idx} className="text-xs text-gray-400 mb-1">
-                              <span className="text-white font-medium">{fm.name}</span>
-                              <span className="text-purple-300 ml-2">({fm.relation})</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="bg-blue-900 text-blue-200 px-2 py-1 rounded text-xs">Solo</span>
-                  )}
                 </div>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-gray-500">Amount:</span>
-                <span className="text-green-400 font-bold">₹{r.amount}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-500">Receipt:</span>
-                {r.receiptUrl ? (
-                  <button onClick={() => setViewReceipt(r.receiptUrl)} className="text-indigo-400 underline hover:text-indigo-300 text-xs">View</button>
-                ) : <span className="text-gray-600 text-xs">No File</span>}
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-500">Registered:</span>
-                <span className="text-xs text-gray-300">{formatDate(r.createdAt)}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-500">Approved By:</span>
-                {r.approvedBy ? (
-                  <span className="text-xs text-white font-medium">{r.approvedBy.username}</span>
-                ) : (
-                  <span className="text-xs text-gray-600">N/A</span>
+              {/* Action Buttons */}
+              <div className="border-t border-gray-800 pt-3 flex flex-col gap-2">
+                {r.status === "PENDING" && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded font-bold text-sm">Approve</button>
+                    <button onClick={() => handleStatus(r._id, "REJECTED")} className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded font-bold text-sm">Reject</button>
+                  </div>
+                )}
+                {r.status === "APPROVED" && (
+                  <button onClick={() => handleStatus(r._id, "PENDING")} className="w-full bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded font-bold text-sm">Disapprove</button>
+                )}
+                {r.status === "REJECTED" && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded font-bold text-sm">Approve</button>
+                    <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded font-bold text-sm">Reset</button>
+                  </div>
                 )}
               </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className="border-t border-gray-800 pt-3 flex flex-col gap-2">
-              {r.status === "PENDING" && (
-                <div className="grid grid-cols-2 gap-2">
-                  <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded font-bold text-sm">Approve</button>
-                  <button onClick={() => handleStatus(r._id, "REJECTED")} className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded font-bold text-sm">Reject</button>
-                </div>
-              )}
-              {r.status === "APPROVED" && (
-                <button onClick={() => handleStatus(r._id, "PENDING")} className="w-full bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded font-bold text-sm">Disapprove</button>
-              )}
-              {r.status === "REJECTED" && (
-                <div className="grid grid-cols-2 gap-2">
-                  <button onClick={() => handleStatus(r._id, "APPROVED")} className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded font-bold text-sm">Approve</button>
-                  <button onClick={() => handleStatus(r._id, "PENDING")} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded font-bold text-sm">Reset</button>
-                </div>
-              )}
-            </div>
+          ))
+        ) : (
+          <div className="p-8 text-center bg-gray-900 rounded-xl border border-gray-800 text-gray-500">
+            {searchTerm ? "No candidates found." : "No registrations found yet."}
           </div>
-        ))}
-        {regs.length === 0 && !loading && <div className="p-8 text-center bg-gray-900 rounded-xl border border-gray-800 text-gray-500">No registrations found yet.</div>}
+        )}
       </div>
 
       {/* Export Modal */}
@@ -376,7 +421,7 @@ export default function AdminRegistrations() {
             </div>
 
             <p className="text-xs text-gray-500 mt-4 text-center">
-              {regs.length} registration{regs.length !== 1 ? 's' : ''} will be exported
+              {filteredRegs.length} registration{filteredRegs.length !== 1 ? 's' : ''} will be exported
             </p>
           </div>
         </div>
