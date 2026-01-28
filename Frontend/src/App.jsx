@@ -11,6 +11,7 @@ import PhotoGallery from "./pages/main/memories";      // Memories (Handles both
 import UserLogin from "./pages/main/userlogin";
 import Meetourteam from "./pages/main/meetourteam";
 import MyRegistrations from "./pages/main/MyRegistrations";
+import MeetOurDevelopers from "./pages/main/MeetOurDevelopers";
 
 /* ---------- Layouts ---------- */
 import ResponsiveAppBar from "./components/navbar.jsx";
@@ -123,6 +124,7 @@ function App() {
             {/* 3. STATIC PAGES */}
             <Route path="/login" element={<UserLogin />} />
             <Route path="/meetourteam" element={<Meetourteam />} />
+            <Route path="/meetourdevelopers" element={<MeetOurDevelopers />} />
 
             {/* 4. TIMELINE (Two Modes) */}
             <Route path="/eventFlow" element={<EventFlow />} />             {/* Navbar Link -> Directory */}

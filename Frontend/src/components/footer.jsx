@@ -50,6 +50,7 @@ export default function Footer() {
                 { name: "Memories", path: "/memories" },
                 { name: "My Registrations", path: "/my-registrations" },
                 { name: "About ARC", path: "/meetourteam" },
+                { name: "Meet Our Developer", path: "/meetourdevelopers" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link to={link.path} className="hover:text-[#ca0002] flex items-start transition-colors">
