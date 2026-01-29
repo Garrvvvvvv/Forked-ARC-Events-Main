@@ -10,6 +10,11 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Username and password required" });
     }
 
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(username)) {
+      return res.status(400).json({ message: "Username must be a valid email address" });
+    }
+
     const existing = await Controller.findOne({ username });
     if (existing) {
       return res.status(400).json({ message: "Username already taken" });

@@ -2,7 +2,17 @@ import Admin from "../../models/Admin.js";
 import jwt from "jsonwebtoken";
 
 export async function seedAdmin(req, res) {
+  if (process.env.ALLOW_SEED !== "TRUE") {
+    return res.status(403).json({ message: "Seeding is disabled on this environment." });
+  }
+
   const { username, password } = req.body;
+
+  const emailRegex = /^\S+@\S+\.\S+$/;
+  if (!emailRegex.test(username)) {
+    return res.status(400).json({ message: "Username must be a valid email address" });
+  }
+
   const exists = await Admin.findOne({ username });
   if (exists) return res.status(400).json({ message: "Admin exists" });
 

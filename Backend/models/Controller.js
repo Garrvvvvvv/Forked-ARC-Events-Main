@@ -3,7 +3,13 @@ import bcrypt from "bcryptjs";
 
 const ControllerSchema = new mongoose.Schema({
   // Auth
-  username: { type: String, required: true, unique: true, trim: true },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, "Username must be a valid email address"]
+  },
   password: { type: String, required: true },
 
   // Role Management

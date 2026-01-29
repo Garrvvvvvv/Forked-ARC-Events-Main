@@ -15,7 +15,7 @@ export const seedDashboard = async (req, res) => {
         });
 
         // 2. Create Controller
-        const username = "testcontroller";
+        const username = "controller@test.com";
         const password = "password123";
 
         // Check if exists
